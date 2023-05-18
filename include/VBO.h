@@ -5,11 +5,14 @@
 #include <cstring>
 #include <glew.h>
 
+class VertexArray;
+
 class VertexBuffer
 {
+    friend class VertexArray;
     friend std::ostream& operator<<(std::ostream& os, const VertexBuffer& VBO);
 public:
-    VertexBuffer(const float* data, const size_t n_floats, const uint8_t* f_per_vert, const uint8_t attrib_ptrs);
+    VertexBuffer(const float* data, const size_t float_count, const uint8_t* f_per_vert, const uint8_t attrib_ptr_count);
     ~VertexBuffer();
 
     inline void Bind() const;

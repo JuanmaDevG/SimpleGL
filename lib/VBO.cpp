@@ -20,3 +20,37 @@ VertexBuffer::VertexBuffer(const float* data, const size_t n_floats, const uint8
 inline void VertexBuffer::Bind() const { glBindBuffer(GL_ARRAY_BUFFER, id); }
 
 inline void VertexBuffer::Unbind() const { glBindBuffer(GL_ARRAY_BUFFER, 0); }
+
+
+//Operator overload
+
+std::ostream& operator<<(std::ostream& s, const VertexBuffer& VBO)
+{
+    s << "Vertex Buffer [" << VBO.id << "] { ";
+
+    uint8_t attrib_number = 0, float_count = 1;
+    for(size_t idx=0; idx < VBO.n_floats; idx++)
+    {
+        if(float_count == 1ui8)
+        {
+            s << " [" << attrib_number << "] (";
+        }
+
+        s << VBO.data[idx];
+        
+        if(float_count == VBO.f_per_vert[attrib_number])
+        {
+            s << ')';
+
+            float_count = 1ui8;
+            attrib_number++;
+            if(attrib_number == VBO.n_attrib_ptrs) attrib_number = 0;
+        }
+        else
+        {
+            s << ' ';
+            float_count++;
+        }
+    }
+    s << '}';
+}
