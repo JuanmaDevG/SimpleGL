@@ -12,7 +12,7 @@ class Shader
 public:
     Shader(const std::string& v_shader_path, const std::string& f_shader_path);
     ~Shader();
-    
+
     inline void Use() const;
     inline void Not_use() const;
 private:
