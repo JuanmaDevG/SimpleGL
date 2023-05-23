@@ -1,0 +1,9 @@
+# IMPORTANT NOTES
+#-> Needed identation by spaces
+#-> Make sure at the end of ninja file there is a newline character
+flags = -Wall -Wextra
+
+rule cpp
+    command = clang++ $flags -o $out $in
+
+build example.exe: cpp example.cpp
