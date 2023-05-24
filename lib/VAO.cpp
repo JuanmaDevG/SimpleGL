@@ -1,5 +1,4 @@
-#include "VAO.h"
-
+#include "VAO.hpp"
 
 VertexArray::VertexArray(VertexBuffer* VBO, ElementBuffer* EBO)
 : VBO(VBO), EBO(EBO)

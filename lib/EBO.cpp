@@ -1,4 +1,4 @@
-#include "EBO.h"
+#include "EBO.hpp"
 
 
 ElementBuffer::ElementBuffer(const uint32_t* data, const uint32_t idx_count) : idx_count(idx_count)

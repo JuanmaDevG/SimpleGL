@@ -1,7 +1,7 @@
 #pragma once
 
-#include "VBO.h"
-#include "EBO.h"
+#include "VBO.hpp"
+#include "EBO.hpp"
 
 
 class VertexArray

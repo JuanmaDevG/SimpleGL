@@ -1,4 +1,4 @@
-#include "VBO.h"
+#include "VBO.hpp"
 
 int main()
 {

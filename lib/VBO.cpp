@@ -1,4 +1,4 @@
-#include "VBO.h"
+#include "VBO.hpp"
 
 VertexBuffer::VertexBuffer(const float* data, const size_t n_floats, const uint8_t* f_per_vert, const uint8_t n_attrib_ptrs)
 {
