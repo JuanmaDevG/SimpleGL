@@ -26,22 +26,27 @@ EXTERNAL_BIN_DIR = SOURCE_DIR + "external\\"
 #############################
 #         BUILT INS         #
 #############################
-DEP_STR = "".join(map(lambda x: " -l" + x, DEPENDENCIES))
+DEP_STR = "".join(map(lambda x: " " + x + ".lib", DEPENDENCIES))
 SRC_LIST = list(map(lambda x: SOURCE_DIR + x + ".cpp", OBJECTS))
 OBJ_LIST = list(map(lambda x: OBJ_DIR + x + ".obj", OBJECTS))
 OBJ_STR = " ".join(OBJ_LIST)
 
 class Rule(Enum):
     compile_obj = "compile_obj"
+    vertex_array = OBJECTS[2]
     link = "link"
 
+DEPENDENCIES = {
+    OBJECTS[2]:" ".join(OBJ_LIST[0], OBJ_LIST[1])
+}
+
 RULES = {
-    Rule.compile_obj:COMPILE + OPTIONS + " -I" + HEADER_DIR + " -L" + EXTERNAL_BIN_DIR + " -o $out -c $in" + DEP_STR,
-    Rule.link:"llvm-lib /OUT:$out " + OBJ_STR
+    Rule.compile_obj:COMPILE + OPTIONS + " -I" + HEADER_DIR + " -o $out -c $in",
+    Rule.vertex_array:COMPILE + OPTIONS + " -I" + HEADER_DIR + " -L" + OBJ_DIR + " -o $out -c $in",
+    Rule.link:"llvm-lib /OUT:$out " + OBJ_STR + " /LIBPATH:" + EXTERNAL_BIN_DIR + DEP_STR
 }
 
 
-#########################################
 
 if __name__ == "__main__":
     buildMaker = Writer(open("build.ninja", 'w',encoding='utf8'))
@@ -59,6 +64,7 @@ if __name__ == "__main__":
         buildMaker.build(obj, Rule.compile_obj.value, SRC_LIST[OBJ_LIST.index(obj)])
         buildMaker.newline()
 
-    buildMaker.build(LIB_NAME, Rule.link.value)   
+    #Link phase
+    buildMaker.build(BUILD_DIR + LIB_NAME, Rule.link.value)   
 
     buildMaker.close()

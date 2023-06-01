@@ -3,11 +3,11 @@
 VertexBuffer::VertexBuffer(const float* data, const size_t n_floats, const uint8_t* f_per_vert, const uint8_t n_attrib_ptrs)
 {
     this->n_attrib_ptrs = n_attrib_ptrs;
-    this->f_per_vert[n_attrib_ptrs];
+    this->f_per_vert = (uint8_t*) alloca(n_attrib_ptrs * sizeof(uint8_t));
     memcpy(this->f_per_vert, f_per_vert, (size_t)n_attrib_ptrs);
 
     this->n_floats = n_floats;
-    this->data[n_floats];
+    this->data = (float*) alloca(n_floats * sizeof(float));
     memcpy(this->data, data, n_floats * sizeof(float));
 
     glGenBuffers(1, &id);
@@ -53,4 +53,6 @@ std::ostream& operator<<(std::ostream& s, const VertexBuffer& VBO)
         }
     }
     s << '}';
+
+    return s;
 }

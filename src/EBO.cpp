@@ -23,4 +23,5 @@ inline void ElementBuffer::Unbind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER
 std::ostream& operator<<(std::ostream& s, const ElementBuffer& EBO)
 {
     s << "Element Buffer [" << EBO.id << "] indexing " << EBO.idx_count << " vertices";
+    return s;
 }

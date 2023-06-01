@@ -4,6 +4,10 @@
 #include <string>
 #include <fstream>
 #include <iterator>
+
+#ifndef GLEW_STATIC
+#define GLEW_STATIC
+#endif
 #include <glew.h>
 
 class Shader

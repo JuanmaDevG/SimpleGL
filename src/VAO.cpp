@@ -50,4 +50,5 @@ std::ostream& operator<<(std::ostream& s, const VertexArray& VAO)
         << "Vertex Array [" << VAO.id << "] with\n\t"
         << (*VAO.VBO) << "\n\t"
         << (*VAO.EBO) << '\n';
+    return s;
 }

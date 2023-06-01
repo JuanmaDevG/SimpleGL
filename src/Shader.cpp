@@ -92,7 +92,8 @@ inline void Shader::Not_use() const { glUseProgram(0); }
 */
 
 //
-std::ostream& operator<<(std::ostream& os, const Shader& prog)
+std::ostream& operator<<(std::ostream& s, const Shader& prog)
 {
-    os << "Shader Program [" << prog.program << "] (v_shader: " << prog.v_shader << ") (frag_shader: " << prog.f_shader << ")";
+    s << "Shader Program [" << prog.program << "] (v_shader: " << prog.v_shader << ") (frag_shader: " << prog.f_shader << ")";
+    return s;
 }

@@ -2,6 +2,10 @@
 
 #include <iostream>
 #include <cstdint>
+
+#ifndef GLEW_STATIC
+#define GLEW_STATIC
+#endif
 #include <glew.h>
 
 class VertexArray;
