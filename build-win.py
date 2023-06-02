@@ -11,16 +11,16 @@ from ninja import Writer
 from enum import Enum
 
 COMPILE = "clang++"
-OPTIONS = " -Wall -Wextra -Werror -O3"
-HEADER_DIR = ".\\include\\"
-SOURCE_DIR = ".\\src\\"
-BUILD_DIR = ".\\build\\"
+OPTIONS = " -Wall -Wextra -O3"
+HEADER_DIR = "include\\"
+SOURCE_DIR = "src\\"
+BUILD_DIR = "build\\"
 OBJ_DIR = BUILD_DIR + "obj\\"
 OBJECTS = ["VBO", "EBO", "VAO", "Shader"]
 LIB_NAME = "simpleGL.lib"
 
 #External includes
-DEPENDENCIES = ["glew32s"] #.lib or .dll files needed
+DEPENDENCIES = ["opengl32", "glew32s"] #.lib or .dll files
 EXTERNAL_BIN_DIR = SOURCE_DIR + "external\\"
 
 #############################
@@ -33,17 +33,15 @@ OBJ_STR = " ".join(OBJ_LIST)
 
 class Rule(Enum):
     compile_obj = "compile_obj"
-    vertex_array = OBJECTS[2]
     link = "link"
 
-DEPENDENCIES = {
-    OBJECTS[2]:" ".join(OBJ_LIST[0], OBJ_LIST[1])
+RULES = {
+    Rule.compile_obj:COMPILE + OPTIONS + " -I" + HEADER_DIR + " -c -o $out $in",
+    Rule.link:"llvm-lib /OUT:$out " + OBJ_STR + " /LIBPATH:" + EXTERNAL_BIN_DIR + DEP_STR
 }
 
-RULES = {
-    Rule.compile_obj:COMPILE + OPTIONS + " -I" + HEADER_DIR + " -o $out -c $in",
-    Rule.vertex_array:COMPILE + OPTIONS + " -I" + HEADER_DIR + " -L" + OBJ_DIR + " -o $out -c $in",
-    Rule.link:"llvm-lib /OUT:$out " + OBJ_STR + " /LIBPATH:" + EXTERNAL_BIN_DIR + DEP_STR
+OBJ_WITH_DEPS = {
+    OBJ_LIST[2]:SRC_LIST[:2]
 }
 
 
@@ -61,10 +59,13 @@ if __name__ == "__main__":
 
     #Build targets
     for obj in OBJ_LIST:
-        buildMaker.build(obj, Rule.compile_obj.value, SRC_LIST[OBJ_LIST.index(obj)])
+        if obj in OBJ_WITH_DEPS:
+            local_deps = OBJ_WITH_DEPS[obj]
+        else:
+            local_deps = None
+        buildMaker.build(obj, Rule.compile_obj.value, SRC_LIST[OBJ_LIST.index(obj)],implicit=local_deps)
         buildMaker.newline()
 
     #Link phase
-    buildMaker.build(BUILD_DIR + LIB_NAME, Rule.link.value)   
-
+    buildMaker.build(BUILD_DIR + LIB_NAME, Rule.link.value, implicit=OBJ_LIST)
     buildMaker.close()
