@@ -11,7 +11,7 @@ from ninja import Writer
 from enum import Enum
 
 COMPILE = "clang++"
-OPTIONS = " -Wall -Wextra -O3"
+OPTIONS = " -Wall -Werror -Wno-undef -Wno-undefined-inline -Wextra -O3" #No needed linker to just compile obj files
 HEADER_DIR = "include\\"
 SOURCE_DIR = "src\\"
 BUILD_DIR = "build\\"
@@ -20,7 +20,7 @@ OBJECTS = ["VBO", "EBO", "VAO", "Shader"]
 LIB_NAME = "simpleGL.lib"
 
 #External includes
-DEPENDENCIES = ["opengl32", "glew32s"] #.lib or .dll files
+DEPENDENCIES = ["glew32s"] #.lib or .dll files
 EXTERNAL_BIN_DIR = SOURCE_DIR + "external\\"
 
 #############################
@@ -57,7 +57,7 @@ if __name__ == "__main__":
         )
         buildMaker.newline()
 
-    #Build targets
+    #Object builds
     for obj in OBJ_LIST:
         if obj in OBJ_WITH_DEPS:
             local_deps = OBJ_WITH_DEPS[obj]
