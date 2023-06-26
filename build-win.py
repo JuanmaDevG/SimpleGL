@@ -7,6 +7,9 @@
 #-> Make a useful info log about ninja and it's compile and clean options
 #
 ######################################################################################################################
+import sys
+import os
+
 from ninja import Writer
 from enum import Enum
 
@@ -17,9 +20,8 @@ SOURCE_DIR = "src\\"
 BUILD_DIR = "build\\"
 OBJ_DIR = BUILD_DIR + "obj\\"
 OBJECTS = ["VBO", "EBO", "VAO", "Shader"]
-LIB_NAME = "simpleGL.lib"
+LIB_NAME = "SimpleGL"
 
-#External includes
 DEPENDENCIES = ["glew32s"] #.lib or .dll files
 EXTERNAL_BIN_DIR = SOURCE_DIR + "external\\"
 
@@ -45,11 +47,7 @@ OBJ_WITH_DEPS = {
 }
 
 
-
-if __name__ == "__main__":
-    buildMaker = Writer(open("build.ninja", 'w',encoding='utf8'))
-
-    #Rule writing
+def makeRules(buildMaker: Writer):
     for rule_id in RULES:
         buildMaker.rule\
         (
@@ -57,7 +55,7 @@ if __name__ == "__main__":
         )
         buildMaker.newline()
 
-    #Object builds
+def makeObjBuilds(buildMaker: Writer):
     for obj in OBJ_LIST:
         if obj in OBJ_WITH_DEPS:
             local_deps = OBJ_WITH_DEPS[obj]
@@ -66,6 +64,48 @@ if __name__ == "__main__":
         buildMaker.build(obj, Rule.compile_obj.value, SRC_LIST[OBJ_LIST.index(obj)],implicit=local_deps)
         buildMaker.newline()
 
-    #Link phase
-    buildMaker.build(BUILD_DIR + LIB_NAME, Rule.link.value, implicit=OBJ_LIST)
+def makeLinkBuild(buildMaker: Writer):
+    buildMaker.build(BUILD_DIR + LIB_NAME + ".lib", Rule.link.value, implicit=OBJ_LIST)
+
+def make_ninja():
+    print("Making build.ninja file")
+
+    #BuildMaker needs a TextIOWrapper to work
+    buildMaker = Writer(open("build.ninja", 'w',encoding='utf8'))
+
+    makeRules(buildMaker)
+    makeObjBuilds(buildMaker)
+    makeLinkBuild(buildMaker)
+
     buildMaker.close()
+
+TESTS = ["VBO_01", "EBO_01", "VAO_01"]
+def execute_tests():
+    print("Compiling library...")
+    os.system("ninja")
+
+    for test in TESTS:
+        print("Test: " + test)
+        os.system(
+            COMPILE + " -I" + HEADER_DIR + " -L" + BUILD_DIR 
+            + " -l" + LIB_NAME + " -lopengl32" 
+            + " -o test.exe test\\test_" + test + ".cpp"
+        )
+        os.system("test")
+        os.system("del test")
+
+
+
+#Option handling is very simple because nothing more needed
+if __name__ == "__main__":
+    print("-----------------------")
+    print("Build file for SimpleGL")
+    print("-----------------------", end="\n\n")
+
+    make_ninja()
+
+    if sys.argv.count("-t") > 0:
+        execute_tests()
+    
+    if sys.argv.count("-c") > 0 or sys.argv.count("--clean") > 0:
+        os.system("ninja -t clean")
