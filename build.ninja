@@ -1,7 +1,14 @@
+#   SPECIAL WARNINGS WHILE USING NINJA
+
 #Common syntax ERRORS:
 # - Ninja compares build dependencies with actual build inputs and outputs, so those need to be defined in 
 #   every build call including directories and extensions, otherwise it will tell that the build target is 
 #   is not known.
+# - Indirect build dependencies must be represented in separated variables because if you group them into 
+#   one, it will recognise them as a same object with spaces and no file will be found. This can be a 
+#   purposed lack of syntax or a bug.
+# - Is needed to be very careful when comparing build objects, because an entire variable is interpreted 
+#   as a single build object, wich can lead to problems
 
 lib_filename = libSimpleGL.a
 
@@ -11,6 +18,7 @@ flags = -Wall -Werror -Wno-undef -Wno-undefined-inline -Wextra -O3
 include_dir = include/
 src_dir = src/
 build_dir = build/
+additional_includes = -I/usr/include/GL/
 
 #Object filenames without extension
 v_buf = VBO
@@ -36,20 +44,23 @@ v_array_deps = $v_buf_o $e_buf_o
 
 
 rule compile_object
-    command = $compiler $flags -I$include_dir -c -o $out $in
+    command = $compiler $flags $additional_includes -I$include_dir -c -o $out $in
 
 rule make_lib
     command = llvm-ar rcs $out $lib_objects
 
 rule clean_obj
-    command = rm -r *.o
+    command = rm -r $build_dir*.o
 
 
 #Object builds
 build $v_buf_o: compile_object $v_buf_src
 build $e_buf_o: compile_object $e_buf_src
 build $sh_class_o: compile_object $sh_class_src
-build $v_array_o: compile_object $v_array_src | $v_array_deps
+build $v_array_o: compile_object $v_array_src | $v_buf_o $e_buf_o
 
 #Library build
-build $build_dir$lib_filename: make_lib | $lib_objects
+build $build_dir$lib_filename: make_lib | $v_buf_o $e_buf_o $sh_class_o $v_array_o
+
+#Object cleanup
+build obj_cleanup: clean_obj | $build_dir$lib_filename

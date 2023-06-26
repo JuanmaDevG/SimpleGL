@@ -8,7 +8,7 @@ VertexArray::VertexArray(VertexBuffer* VBO, ElementBuffer* EBO)
     this->VBO->Bind();
     this->EBO->Bind();
 
-    size_t offset = 0ui64, stride;
+    size_t offset = 0, stride;
     for(uint8_t index = 0; index < VBO->n_attrib_ptrs; index++, offset += stride)
     {
         stride = (size_t)VBO->f_per_vert[index] * sizeof(float);

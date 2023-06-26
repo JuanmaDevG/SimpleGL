@@ -31,7 +31,7 @@ std::ostream& operator<<(std::ostream& s, const VertexBuffer& VBO)
     uint8_t attrib_number = 0, float_count = 1;
     for(size_t idx=0; idx < VBO.n_floats; idx++)
     {
-        if(float_count == 1ui8)
+        if(float_count == 1)
         {
             s << " [" << attrib_number << "] (";
         }
@@ -42,7 +42,7 @@ std::ostream& operator<<(std::ostream& s, const VertexBuffer& VBO)
         {
             s << ')';
 
-            float_count = 1ui8;
+            float_count = 1;
             attrib_number++;
             if(attrib_number == VBO.n_attrib_ptrs) attrib_number = 0;
         }

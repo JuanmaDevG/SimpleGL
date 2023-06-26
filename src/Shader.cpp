@@ -52,7 +52,7 @@ uint32_t Shader::_create_shader(GLenum type, const std::string& sh_path) const
     uint32_t shader = glCreateShader(type);
 
     std::ifstream file(sh_path, std::ios::in);
-    if(!file.is_open()) return 0ui32;
+    if(!file.is_open()) return 0;
 
     //Extra parentheses for the compiler to interpret the code as an object, and not as a function
     std::string src((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());

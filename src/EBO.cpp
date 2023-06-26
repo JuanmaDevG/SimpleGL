@@ -12,7 +12,7 @@ ElementBuffer::ElementBuffer(const uint32_t* data, const uint32_t idx_count) : i
 ElementBuffer::~ElementBuffer()
 {
     glDeleteBuffers(1, &id);
-    idx_count = 0ui32;
+    idx_count = 0;
 }
 
 inline void ElementBuffer::Bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id); }
