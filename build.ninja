@@ -1,0 +1,55 @@
+#Common syntax ERRORS:
+# - Ninja compares build dependencies with actual build inputs and outputs, so those need to be defined in 
+#   every build call including directories and extensions, otherwise it will tell that the build target is 
+#   is not known.
+
+lib_filename = libSimpleGL.a
+
+#Compiler information
+compiler = clang++
+flags = -Wall -Werror -Wno-undef -Wno-undefined-inline -Wextra -O3
+include_dir = include/
+src_dir = src/
+build_dir = build/
+
+#Object filenames without extension
+v_buf = VBO
+e_buf = EBO
+sh_class = Shader
+v_array = VAO
+
+#Located source filenames
+v_buf_src = $src_dir$v_buf.cpp
+e_buf_src = $src_dir$e_buf.cpp
+sh_class_src = $src_dir$sh_class.cpp
+v_array_src = $src_dir$v_array.cpp
+
+#Located object filenames
+v_buf_o = $build_dir$v_buf.o
+e_buf_o = $build_dir$e_buf.o
+sh_class_o = $build_dir$sh_class.o
+v_array_o = $build_dir$v_array.o
+
+#Dependencies
+lib_objects = $v_buf_o $e_buf_o $sh_class_o $v_array_o
+v_array_deps = $v_buf_o $e_buf_o
+
+
+rule compile_object
+    command = $compiler $flags -I$include_dir -c -o $out $in
+
+rule make_lib
+    command = llvm-ar rcs $out $lib_objects
+
+rule clean_obj
+    command = rm -r *.o
+
+
+#Object builds
+build $v_buf_o: compile_object $v_buf_src
+build $e_buf_o: compile_object $e_buf_src
+build $sh_class_o: compile_object $sh_class_src
+build $v_array_o: compile_object $v_array_src | $v_array_deps
+
+#Library build
+build $build_dir$lib_filename: make_lib | $lib_objects
