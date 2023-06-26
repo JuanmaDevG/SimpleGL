@@ -1,6 +1,5 @@
 .vscode/*
 build/*
-build.ninja
 TO_DOC.txt
 *.lib
 !src/external/glew32s.lib
