@@ -1,6 +1,5 @@
-#   SPECIAL WARNINGS WHILE USING NINJA
+# SPECIAL WARNINGS WHILE USING NINJA
 
-#Common syntax ERRORS:
 # - Ninja compares build dependencies with actual build inputs and outputs, so those need to be defined in 
 #   every build call including directories and extensions, otherwise it will tell that the build target is 
 #   is not known.

@@ -1,19 +1,55 @@
-rule compile_obj
-  command = clang++ -Wall -Werror -Wno-undef -Wno-undefined-inline -Wextra $
-      -O3 -Iinclude\ -c -o $out $in
+lib_filename = SimpleGL.lib
 
-rule link
-  command = llvm-lib /OUT:$out build\obj\VBO.obj build\obj\EBO.obj $
-      build\obj\VAO.obj build\obj\Shader.obj /LIBPATH:src\external\ $
-      glew32s.lib
+#Compiler information
+compiler = clang++
+flags = -Wall -Werror -Wno-undef -Wno-undefined-inline -Wextra -O3
+include_dir = include\
+src_dir = src\
+build_dir = build\
+additional_includes = -I\Libs\include\
 
-build build\obj\VBO.obj: compile_obj src\VBO.cpp
+#Object filenames without extension
+v_buf = VBO
+e_buf = EBO
+sh_class = Shader
+v_array = VAO
 
-build build\obj\EBO.obj: compile_obj src\EBO.cpp
+#Located source filenames
+v_buf_src = $src_dir$v_buf.cpp
+e_buf_src = $src_dir$e_buf.cpp
+sh_class_src = $src_dir$sh_class.cpp
+v_array_src = $src_dir$v_array.cpp
 
-build build\obj\VAO.obj: compile_obj src\VAO.cpp | src\VBO.cpp src\EBO.cpp
+#Located object filenames
+v_buf_o = $build_dir$v_buf.obj
+e_buf_o = $build_dir$e_buf.obj
+sh_class_o = $build_dir$sh_class.obj
+v_array_o = $build_dir$v_array.obj
 
-build build\obj\Shader.obj: compile_obj src\Shader.cpp
+#Dependencies
+lib_objects = $v_buf_o $e_buf_o $sh_class_o $v_array_o
+v_array_deps = $v_buf_o $e_buf_o
 
-build build\SimpleGL.lib: link | build\obj\VBO.obj build\obj\EBO.obj $
-    build\obj\VAO.obj build\obj\Shader.obj
+
+rule compile_object
+    command = $compiler $flags $additional_includes -I$include_dir -c -o $out $in
+
+rule make_lib
+    command = llvm-ar rcs $out $lib_objects
+
+rule clean_obj
+    command = del $build_dir*.obj
+
+
+#Object builds
+build $v_buf_o: compile_object $v_buf_src
+build $e_buf_o: compile_object $e_buf_src
+build $sh_class_o: compile_object $sh_class_src
+build $v_array_o: compile_object $v_array_src | $v_buf_o $e_buf_o
+
+#Library build
+build $build_dir$lib_filename: make_lib | $
+  $v_buf_o $e_buf_o $sh_class_o $v_array_o
+
+#Object cleanup
+build obj_cleanup: clean_obj | $build_dir$lib_filename
