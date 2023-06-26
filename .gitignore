@@ -2,5 +2,5 @@
 build/*
 TO_DOC.txt
 *.lib
-!src/external/glew32s.lib
-.ninja_log
+*.a
+*.ninja_log
